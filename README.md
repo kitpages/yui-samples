@@ -8,6 +8,8 @@ Author : Philippe Le Van (twitter @plv) [http://www.kitpages.fr](http://www.kitp
 
 clone the repository in the docRoot of your apache (with php installed)
 
+## list of samples
+
 ### yui.app.1.progressiveEnhancement
 
 This sample shows a 4 pages website that can be viewed without JS with a normal navigation and with JS with
