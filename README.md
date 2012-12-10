@@ -20,6 +20,6 @@ uses :
 * Pjax
 * Node
 
-go to http://localhost/yui-sample/yui.app.1.progressiveEnhancement/index.php and click on links. Note that
+go to (http://localhost/yui-sample/yui.app.1.progressiveEnhancement/index.php) and click on links. Note that
 JS transitions is different between list page and detail page.
 
