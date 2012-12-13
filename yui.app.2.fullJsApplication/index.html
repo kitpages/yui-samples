@@ -1,0 +1,108 @@
+<html>
+<head>
+    <title>Tuto Y.App</title>
+    <script src="http://yui.yahooapis.com/3.8.0pr2/build/yui/yui-min.js"></script>
+</head>
+<body>
+<h1>Y.App for a fullJS webapp</h1>
+
+<a href="/">Home</a><br/>
+<a href="/page/about">About link</a><br/>
+<a href="/page/list">List</a><br/>
+<a href="/redirect">Redirect</a><br/>
+
+<div id="content"></div>
+
+
+<!--
+HomePage Template:
+
+Template HTML used by the `HomePageView` to render the app's home page.
+-->
+<script id="page-home" type="text/x-template">
+    <h2>Home page</h2>
+    Contenu de la page d'accueil
+</script>
+<script id="page-about" type="text/x-template">
+    <h2>About</h2>
+    About us page
+</script>
+<script id="page-list" type="text/x-template">
+    <h2>List</h2>
+    <ul>
+        <li><a href="/page/detail">Element 1</a></li>
+        <li><a href="/page/detail">Element 2</a></li>
+        <li><a href="/page/detail">Element 3</a></li>
+        <li><a href="/page/detail">Element 4</a></li>
+    </ul>
+</script>
+<script id="page-detail" type="text/x-template">
+    <h2>Detail</h2>
+</script>
+
+
+<script type="text/javascript">
+    YUI().use('app', 'node', 'template', 'dump', function (Y) {
+
+        PageView = Y.PageView = Y.Base.create('pageView', Y.View, [], {
+            template: new Y.Template(Y.Template.Micro),
+            render: function() {
+                var html = '';
+                var page = this.get("path").replace('/page/','');
+                var pageId = "page-"+page;
+                Y.log("pageId="+pageId);
+                var tplList = Y.all("#"+pageId);
+                if (!tplList.isEmpty()) {
+                    html = tplList.shift().getHTML();
+                }
+
+                this.get('container').setHTML(this.template.render(
+                    html,
+                    {}
+                ));
+                Y.log("pageview: path="+this.get("path"));
+                return this;
+            }
+        } , {
+            ATTRS: {
+                path: {}
+            }
+        });
+
+
+        var app = new Y.App({
+            views: {
+                '': {},
+                'page': {type: 'PageView'},
+                'detail': {parent:"list",type: 'PageView'},
+                'list': {type: 'PageView'}
+            },
+            transitions: true,
+            viewContainer: '#content',
+            container: '#content'
+        });
+        app.set("root", "/yui-samples/yui.app.2.fullJsApplication/");
+        app.route('/page/*', function(req, res, next) {
+            this.showView('page', {path: req.path});
+        });
+        app.route('/list', function(req, res, next) {
+            this.showView('list', {path: "/page/list"});
+        });
+        app.route('/detail', function(req, res, next) {
+            this.showView('detail', {path: "/page/detail"});
+        });
+        app.route('/redirect', function(req, res, next) {
+            Y.log("/redirect : complete req="+ Y.dump(req));
+            app.navigate("/page/about");
+        });
+        app.route('*', function(req, res, next) {
+            Y.log("* req="+req.path+ " ; query="+ Y.dump(req.query) + " ; url="+req.url);
+            Y.log("* complete req="+ Y.dump(req));
+            app.navigate("/page/home");
+        });
+        app.render().dispatch();
+    });
+</script>
+
+</body>
+</html>
